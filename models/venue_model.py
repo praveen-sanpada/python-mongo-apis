@@ -25,3 +25,26 @@ class VenueModel:
             if inning_data:
                 return inning_data
         return None
+        
+    def get_random_search(self, venue_id, search_string):
+        # Construct the projection as a dictionary
+        projection = {search_string: 1, "_id": 0}  # Include only the search string and exclude _id
+        
+        # Create a filter to check if the field exists
+        filter_query = { "vid": venue_id, search_string: {"$exists": True } }
+        
+        # Fetch data where the venue_id is matched and the field exists
+        venue = self.db.find_one(
+            filter_query,  # Filter by venue_id and ensure the field exists
+            projection  # Project only the desired field
+        )
+        
+        # Check if the venue data exists and access the nested value
+        if venue:
+            # Use the dynamic search_string to access the specific nested field
+            keys = search_string.split(".")
+            value = venue
+            for key in keys:
+                value = value.get(key, {})
+            return value
+        return None

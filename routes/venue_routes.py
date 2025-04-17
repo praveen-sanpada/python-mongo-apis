@@ -25,3 +25,15 @@ def get_t20_sts(venue_id, inning_number):
         return jsonify(t20_inning_data), 200  # Return the t20 inning data in JSON format
     else:
         return jsonify({"error": "Data not found for the specified venue and inning"}), 404
+
+@venue_bp.route("/venues/get_random_search/<venue_id>", methods=["GET"])
+def get_random_search(venue_id):
+    venue_model = VenueModel()
+    # Set the search string (field) dynamically for the query
+    search_string = "t20.sts.1.mch"  # Field you want to search for in the projection
+    random_search = venue_model.get_random_search(venue_id, search_string)
+    
+    if random_search:
+        return jsonify(random_search), 200  # Return the search result in JSON format
+    else:
+        return jsonify({"error": "Data not found for the specified venue and search criteria"}), 404
